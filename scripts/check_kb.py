@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""检查个人知识库的 Frontmatter、链接、编码与敏感信息风险。"""
+"""检查个人知识库的 Frontmatter、Wiki Link、编码与敏感信息风险。"""
 
 from __future__ import annotations
 
+import argparse
 import re
 import sys
 from collections import defaultdict
@@ -24,6 +25,17 @@ SENSITIVE = (
     ("secret", re.compile(r"(?i)secret\s*[:=]\s*['\"]?[A-Za-z0-9_.\-]{12,}")),
     ("私钥头", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
 )
+DEFAULT_LINK_LIMIT = 10
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="检查个人知识库 Markdown 文件")
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="显示每个来源文件中的全部失效 Wiki Link",
+    )
+    return parser.parse_args()
 
 
 def parse_frontmatter(text: str) -> tuple[dict[str, str], str | None]:
@@ -34,6 +46,7 @@ def parse_frontmatter(text: str) -> tuple[dict[str, str], str | None]:
         end = next(i for i in range(1, len(lines)) if lines[i].strip() == "---")
     except StopIteration:
         return {}, "缺少 Frontmatter 结束分隔符"
+
     data: dict[str, str] = {}
     for line in lines[1:end]:
         if not line.strip() or line.lstrip().startswith("#"):
@@ -50,16 +63,37 @@ def link_target(raw: str) -> str:
     return target[:-3] if target.lower().endswith(".md") else target
 
 
+def display_grouped_broken_links(
+    broken_by_file: dict[Path, list[str]], *, verbose: bool
+) -> None:
+    if not broken_by_file:
+        return
+
+    print("\n[失效 Wiki Link 警告]")
+    for path in sorted(broken_by_file, key=lambda item: item.as_posix()):
+        links = broken_by_file[path]
+        shown = links if verbose else links[:DEFAULT_LINK_LIMIT]
+        print(f"- {path}（{len(links)} 个）")
+        for raw in shown:
+            print(f"  - [[{raw}]]")
+        hidden = len(links) - len(shown)
+        if hidden:
+            print(f"  - 另有 {hidden} 个未显示")
+
+
 def main() -> int:
+    args = parse_args()
     files = sorted(CONTENT.rglob("*.md"))
     errors: list[str] = []
-    warnings: list[str] = []
-    broken: list[str] = []
+    general_warnings: list[str] = []
+    broken_by_file: defaultdict[Path, list[str]] = defaultdict(list)
     titles: defaultdict[str, list[Path]] = defaultdict(list)
     texts: dict[Path, str] = {}
 
     stems = {path.stem for path in files}
-    relative_no_ext = {path.relative_to(CONTENT).with_suffix("").as_posix() for path in files}
+    relative_no_ext = {
+        path.relative_to(CONTENT).with_suffix("").as_posix() for path in files
+    }
 
     for path in files:
         rel = path.relative_to(ROOT)
@@ -70,8 +104,7 @@ def main() -> int:
             continue
         texts[path] = text
 
-        is_template = "_templates" in path.parts
-        if is_template:
+        if "_templates" in path.parts:
             continue
 
         frontmatter, problem = parse_frontmatter(text)
@@ -101,7 +134,7 @@ def main() -> int:
 
     for title, paths in sorted(titles.items()):
         if len(paths) > 1:
-            joined = ", ".join(str(p.relative_to(ROOT)) for p in paths)
+            joined = ", ".join(str(path.relative_to(ROOT)) for path in paths)
             errors.append(f"重复 title「{title}」：{joined}")
 
     for path, text in texts.items():
@@ -112,30 +145,36 @@ def main() -> int:
             if not target or (is_template and "{{" in target):
                 continue
             if target not in stems and target not in relative_no_ext:
-                broken.append(f"{rel}: [[{raw}]]")
+                broken_by_file[rel].append(raw)
+
         if not is_template:
             for label, pattern in SENSITIVE:
                 if pattern.search(text):
-                    warnings.append(f"{rel}: 发现可能的敏感信息模式（{label}）")
+                    general_warnings.append(
+                        f"{rel}: 发现可能的敏感信息模式（{label}）"
+                    )
+
+    broken_count = sum(len(links) for links in broken_by_file.values())
+    warning_count = len(general_warnings) + broken_count
+    index_rel = Path("content/index.md")
+    index_broken_count = len(broken_by_file.get(index_rel, []))
 
     if errors:
         print("\n[错误]")
         for item in errors:
             print(f"- {item}")
-    if warnings:
-        print("\n[警告]")
-        for item in warnings:
+    if general_warnings:
+        print("\n[其他警告]")
+        for item in general_warnings:
             print(f"- {item}")
-    if broken:
-        print("\n[失效 Wiki Link]")
-        for item in broken:
-            print(f"- {item}")
+    display_grouped_broken_links(broken_by_file, verbose=args.verbose)
 
     print("\n[汇总]")
     print(f"扫描文件数: {len(files)}")
     print(f"错误数: {len(errors)}")
-    print(f"警告数: {len(warnings)}")
-    print(f"失效链接数: {len(broken)}")
+    print(f"警告数: {warning_count}")
+    print(f"失效链接数: {broken_count}")
+    print(f"首页失效链接数: {index_broken_count}")
     return 1 if errors else 0
 
 
