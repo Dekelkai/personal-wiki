@@ -16,3 +16,18 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .backup/
+
+# Quartz v5 upstream rules
+.DS_Store
+.gitignore
+node_modules
+public
+prof
+tsconfig.tsbuildinfo
+.obsidian
+.quartz-cache
+private/
+.replit
+replit.nix
+.quartz/
+quartz/cli/tui/dist/
