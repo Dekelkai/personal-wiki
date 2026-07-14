@@ -7,7 +7,7 @@ configuration:
   analytics:
     provider: plausible
   locale: zh-CN
-  baseUrl: Dekelkai.github.io/personal-wiki
+  baseUrl: tangxk.cn/personal-wiki
   ignorePatterns:
     - private
     - templates
