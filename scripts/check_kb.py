@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from collections import defaultdict
@@ -12,10 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "content"
-REQUIRED = ("title", "type", "domain", "status", "publish", "created", "updated")
-TYPES = {"index", "concept", "method", "guide", "paper", "dataset", "project", "experiment", "decision", "troubleshooting", "reference", "article"}
-DOMAINS = {"home", "research", "engineering", "ai", "projects", "writing", "reference"}
-STATUSES = {"draft", "maintained", "completed", "archived"}
+SCHEMA = ROOT / "schemas" / "frontmatter.schema.json"
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 WIKI_RE = re.compile(r"\[\[([^\]]+)\]\]")
 SENSITIVE = (
@@ -26,6 +24,26 @@ SENSITIVE = (
     ("私钥头", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
 )
 DEFAULT_LINK_LIMIT = 10
+
+
+def load_schema_contract() -> tuple[tuple[str, ...], dict[str, set[str]]]:
+    schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+    required = schema.get("required")
+    properties = schema.get("properties", {})
+    if not isinstance(required, list) or not all(
+        isinstance(item, str) for item in required
+    ):
+        raise ValueError("Schema required 必须为字符串数组")
+
+    enums: dict[str, set[str]] = {}
+    for field in ("type", "domain", "status"):
+        values = properties.get(field, {}).get("enum")
+        if not isinstance(values, list) or not all(
+            isinstance(item, str) for item in values
+        ):
+            raise ValueError(f"Schema {field}.enum 必须为字符串数组")
+        enums[field] = set(values)
+    return tuple(required), enums
 
 
 def parse_args() -> argparse.Namespace:
@@ -83,6 +101,13 @@ def display_grouped_broken_links(
 
 def main() -> int:
     args = parse_args()
+    try:
+        required, enums = load_schema_contract()
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
+        print("\n[错误]")
+        print(f"- 无法读取 Frontmatter Schema：{exc}")
+        return 1
+
     files = sorted(CONTENT.rglob("*.md"))
     errors: list[str] = []
     general_warnings: list[str] = []
@@ -112,18 +137,18 @@ def main() -> int:
             errors.append(f"{rel}: {problem}")
             continue
 
-        for field in REQUIRED:
+        for field in required:
             if not frontmatter.get(field):
                 errors.append(f"{rel}: 缺少必填字段 {field}")
 
         title = frontmatter.get("title")
         if title:
             titles[title].append(path)
-        if frontmatter.get("type") and frontmatter["type"] not in TYPES:
+        if frontmatter.get("type") and frontmatter["type"] not in enums["type"]:
             errors.append(f"{rel}: type 值无效：{frontmatter['type']}")
-        if frontmatter.get("domain") and frontmatter["domain"] not in DOMAINS:
+        if frontmatter.get("domain") and frontmatter["domain"] not in enums["domain"]:
             errors.append(f"{rel}: domain 值无效：{frontmatter['domain']}")
-        if frontmatter.get("status") and frontmatter["status"] not in STATUSES:
+        if frontmatter.get("status") and frontmatter["status"] not in enums["status"]:
             errors.append(f"{rel}: status 值无效：{frontmatter['status']}")
         if frontmatter.get("publish") not in {"true", "false"}:
             errors.append(f"{rel}: publish 必须为 true 或 false")
