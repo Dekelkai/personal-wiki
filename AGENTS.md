@@ -45,6 +45,8 @@
 5. Markdown 文件统一使用 UTF-8。
 6. 明确区分外部事实、来源作者结论、用户实验结果、用户判断和 Agent 推断。
 7. 创建页面时以当前 Schema 和模板为准；目标知识模型与当前 Schema 不一致时先报告，不自行扩展枚举。
+8. 目录表达稳定知识领域：`computer-science`、`resources`、`practice`、`writing`；页面状态、最近更新和项目进度不得作为知识目录层级。
+9. `concept`、`topic`、`method` 主要进入学科目录；`paper`、`dataset`、`metric`、`survey` 进入资源目录；`experiment`、`project`、`decision`、`troubleshooting` 进入实践目录。
 
 ## Skill 维护
 

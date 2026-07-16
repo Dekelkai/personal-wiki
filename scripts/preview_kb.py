@@ -31,7 +31,7 @@ def parse_args() -> argparse.Namespace:
         action="append",
         dest="private_roots",
         metavar="目录",
-        help="临时开放指定的 content 一级目录；可重复使用，默认 research",
+        help="临时开放指定的 content 一级目录；可重复使用，默认 computer-science 和 resources",
     )
     parser.add_argument(
         "--all-private",
@@ -100,7 +100,7 @@ class QuartzPreviewHandler(http.server.SimpleHTTPRequestHandler):
 
 def main() -> int:
     args = parse_args()
-    private_roots = set(args.private_roots or ["research"])
+    private_roots = set(args.private_roots or ["computer-science", "resources"])
     missing_roots = sorted(root for root in private_roots if not (CONTENT / root).is_dir())
     if missing_roots:
         print(f"不存在的 content 目录：{', '.join(missing_roots)}")

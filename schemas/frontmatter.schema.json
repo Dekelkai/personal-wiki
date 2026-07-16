@@ -12,7 +12,7 @@
     },
     "domain": {
       "type": "string",
-      "enum": ["home", "research", "engineering", "ai", "projects", "writing", "reference"]
+      "enum": ["home", "computer-science", "resources", "practice", "writing", "reference"]
     },
     "status": {"type": "string", "enum": ["draft", "maintained", "completed", "archived"]},
     "publish": {"type": "boolean"},
@@ -26,7 +26,8 @@
     "license": {"type": "string"},
     "version": {"type": "string"},
     "project_status": {"type": "string"},
-    "tags": {"type": "array", "items": {"type": "string"}}
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "topics": {"type": "array", "items": {"type": "string"}}
   },
   "additionalProperties": true
 }

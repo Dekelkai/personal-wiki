@@ -1,42 +1,59 @@
 # 个人知识 Wiki
 
-这是一个以 Markdown、YAML Frontmatter 和 Git 为规范数据源的长期知识库，内容覆盖当前研究、计算机科学与工程、人工智能、项目实验和写作输出。Obsidian 用于编辑，Quartz 负责公开展示。
+这是一个以 Markdown、YAML Frontmatter 和 Git 为规范数据源的长期知识库。内容按照稳定学科和知识对象组织，Obsidian 用于编辑，Quartz 负责公开展示。
 
-## 主要目录
+## 知识结构
 
-- `content/`：Obsidian Vault 与知识正文；
-- `content/maps/`：五个领域入口的源文件目录，网页标题不使用“地图”命名；
-- `content/research/`：研究主题、综述、数据集、指标、方法和论文证据；
-- `content/engineering/`：计算机基础、编程语言和工程实践；
-- `content/ai/`：人工智能知识与工具实践；
-- `content/projects/`：项目、实验与技术决策；
-- `content/reference/`：参考资料和内部维护内容；
+```text
+知识首页
+├── 计算机科学
+├── 研究资料
+├── 实践记录
+└── 写作与输出
+```
+
+- `content/computer-science/`：算法、编程语言、系统、软件工程和人工智能；
+- `content/resources/`：论文、数据集、指标、综述和参考资料；
+- `content/practice/`：实验、项目、技术决策和问题排查；
+- `content/writing/`：学术写作、技术报告和博客输出；
+- `content/reference/`：内部维护规范，不进入默认本地预览；
 - `content/_inbox/`：待核验任务，始终不公开；
-- `content/_templates/`：笔记模板；
+- `content/_templates/`：标准页面模板；
+- `content/_archive/`：历史索引与归档内容；
 - `schemas/`：Frontmatter Schema；
 - `scripts/`：检查与本地预览工具；
 - `docs/`：项目设计、路线和试点记录。
 
-Obsidian Vault 路径：`F:\KnowledgeBase\personal-wiki\content`。
+Obsidian Vault：`F:\KnowledgeBase\personal-wiki\content`。
+
+## 分类方法
+
+目录回答“知识属于哪个稳定领域”，Frontmatter `type` 回答“页面是什么对象”。例如：
+
+- 无人机绝对视觉定位：`computer-science` + `topic`；
+- AerialVL：`resources` + `dataset`；
+- 视觉定位误差指标：`resources` + `metric`；
+- 实际复现实验：`practice` + `experiment`。
+
+`topics` 用于表达计算机视觉、视觉定位、Go 等交叉主题，不为每个标签创建目录。
 
 ## 内容来源边界
 
-- `personal-wiki` 保存整理后的长期知识和项目记录；
-- PaperNotes、Zotero PDF、专题报告和博客是只读来源，不进行无审查的批量复制；
-- 原始材料需要先识别概念、方法、数据集、指标、论文证据和实验，再决定更新已有页面或创建新页面；
-- `publish: false` 只控制 Quartz 输出，不是敏感信息保护机制。
+- `personal-wiki` 保存经过整理、去重和来源标注的长期知识；
+- PaperNotes、Zotero PDF、专题报告和博客是只读来源，不进行无审查批量复制；
+- `publish: false` 只控制 Quartz 输出，不是敏感信息保护机制；
+- 外部事实、论文结论、个人实验和推断分别表述。
 
 ## 新建或修改页面
 
-1. 先搜索已有标题、别名和近义概念；
-2. 判断页面属于哪种知识对象，而不是只按文件夹归类；
+1. 搜索已有标题、别名和近义概念；
+2. 判断稳定领域和知识对象；
 3. 使用 `content/_templates/` 中最接近的模板；
 4. 新页面默认 `status: draft`、`publish: false`；
-5. 区分外部事实、论文结论、个人实验和待验证判断；
-6. 为外部事实和研究结论保留来源；
-7. 修改后运行检查和 Quartz 构建。
+5. 为外部事实和研究结论保留来源；
+6. 修改后运行检查和 Quartz 构建。
 
-详细规则见 `AGENTS.md`、`schemas/frontmatter.schema.json` 和 `docs/项目总览与路线图.md`。
+详细规则见 `AGENTS.md`、`schemas/frontmatter.schema.json`、`docs/内容与排版规范.md` 和 `docs/项目总览与路线图.md`。
 
 ## 检查与构建
 
@@ -45,17 +62,18 @@ python3 scripts/check_kb.py
 node ./quartz/bootstrap-cli.mjs build
 ```
 
-## 本地审阅私有研究页面
+## 本地审阅
 
 ```bash
 python3 scripts/preview_kb.py
 ```
 
-浏览器访问 `http://localhost:8080/`。默认只额外开放 `content/research/` 中的私有草稿；其他范围和完整预览方式见 `scripts/README.md`。
+浏览器访问 `http://localhost:8080/`。默认额外开放 `computer-science` 与 `resources` 中的私有草稿；其他范围见 `scripts/README.md`。
 
 ## 外部目录
 
 以下目录只能按用户指定路径选择性读取，禁止 Agent 修改：
 
 - `F:\OneDrive\obsidian\PaperNotes`；
+- `F:\OneDrive\obsidian\Notes`；
 - `F:\Blog`。

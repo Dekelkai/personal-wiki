@@ -48,13 +48,13 @@ python3 scripts/preview_kb.py
 http://localhost:8080/
 ```
 
-该脚本会在 `/tmp` 创建内容副本。默认只临时开放 `content/research/` 中的私有草稿，并继续排除 `_inbox`、`_templates`、`_archive` 和 `.obsidian`，避免维护规则和其他未审阅草稿同时出现在页面中。源 Markdown、`publish` 字段、`quartz.config.yaml`、`public/` 和部署流程均不会被修改。
+该脚本会在 `/tmp` 创建内容副本。默认临时开放 `content/computer-science/` 和 `content/resources/` 中的私有草稿，并继续排除 `_inbox`、`_templates`、`_archive` 和 `.obsidian`，避免维护规则和其他未审阅草稿同时出现在页面中。源 Markdown、`publish` 字段、`quartz.config.yaml`、`public/` 和部署流程均不会被修改。
 
 预览工程或多个领域：
 
 ```bash
-python3 scripts/preview_kb.py --private-root engineering
-python3 scripts/preview_kb.py --private-root research --private-root engineering
+python3 scripts/preview_kb.py --private-root practice
+python3 scripts/preview_kb.py --private-root computer-science --private-root practice
 ```
 
 只有确实需要完整内部审阅时才使用：
