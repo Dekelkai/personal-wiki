@@ -102,6 +102,10 @@ For each dataset candidate, record independently when available:
 
 Never compare a training-image count with a whole-dataset count, a place count with a trajectory count, or a route length with spatial area without explicitly naming the unit and scope.
 
+When equivalent DOCX, PDF, HTML, spreadsheet, or exported versions are supplied, compare their headings, table shapes, named objects, key values, and visible omissions. Use the format best suited to each task, but record whether the versions are substantively consistent; do not infer exact identity from filenames alone.
+
+Recompute summary totals from detailed records when possible. If a cover, abstract, chart, and table imply different totals, record the number of category rows, the number of unique objects after documented deduplication, and the unresolved source value separately. Do not silently force the detailed data to match the headline.
+
 When an official page and a secondary report disagree, retain a discrepancy record such as “report value observed on date A; official project value observed on date B.” Do not silently overwrite either value until the release or counting definition is known.
 
 A secondary report does not automatically need a formal `paper` page or a BibTeX entry. Preserve DOI, CiteKey, or BibTeX when a publication is itself a tracked evidence object; for a user report, file path, title, date, page location, and its cited primary sources are normally sufficient during analysis.

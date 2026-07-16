@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "content"
 QUARTZ_CLI = ROOT / "quartz" / "bootstrap-cli.mjs"
 SITE_CHECK = ROOT / "scripts" / "check_site.py"
+DEPLOY_BASE_PATH = "/personal-wiki"
 IGNORED_PARTS = {"_inbox", "_templates", "_archive", ".obsidian", "private", "templates"}
 PUBLISH_FALSE_RE = re.compile(r"^(\s*publish:\s*)false(\s*)$")
 
@@ -91,13 +92,25 @@ def prepare_preview_content(
 class QuartzPreviewHandler(http.server.SimpleHTTPRequestHandler):
     def send_head(self):  # type: ignore[no-untyped-def]
         parsed = urlsplit(self.path)
-        relative = Path(unquote(parsed.path.lstrip("/")))
+        request_path = parsed.path
+        if request_path == DEPLOY_BASE_PATH:
+            request_path = "/"
+        elif request_path.startswith(DEPLOY_BASE_PATH + "/"):
+            request_path = request_path[len(DEPLOY_BASE_PATH) :]
+
+        query = f"?{parsed.query}" if parsed.query else ""
+        self.path = request_path + query
+        relative = Path(unquote(request_path.lstrip("/")))
         candidate = Path(self.directory) / relative
         if not candidate.exists() and relative.suffix == "":
             html_candidate = candidate.with_suffix(".html")
             if html_candidate.is_file():
-                self.path = parsed.path + ".html"
+                self.path = request_path + ".html" + query
         return super().send_head()
+
+    def list_directory(self, path):  # type: ignore[no-untyped-def]
+        self.send_error(404, "File not found")
+        return None
 
 
 def main() -> int:
@@ -155,6 +168,7 @@ def main() -> int:
         )
         server = http.server.ThreadingHTTPServer((args.host, args.port), handler)
         print(f"本地预览：http://localhost:{args.port}/")
+        print(f"子路径预览：http://localhost:{args.port}{DEPLOY_BASE_PATH}/")
         print("仅用于本机审阅；内容修改后请重启。按 Ctrl+C 停止。")
         try:
             server.serve_forever()

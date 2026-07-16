@@ -49,10 +49,12 @@ Use **apply mode** only after the user approves specific pages or edits. Apply m
 1. Confirm the path and source role. Convert Windows paths to WSL mount paths when needed.
 2. Confirm the file is readable and record filename, format, size, document date, analysis date, and other useful metadata.
 3. Use a format-specific reader. For PDFs, extract text and render representative pages when layout, tables, figures, formulas, or OCR quality matter. Visually reconstruct tables that continue across pages instead of trusting flattened text order.
-4. Preserve page, section, table, figure, heading, DOI, URL, CiteKey, or other source locations.
-5. Classify each source as primary, official project, secondary synthesis, user record, or Agent-generated material. Record the observed version and access date for changeable project pages and datasets.
-6. Record extraction limitations. Mark unreadable, conflicting, incomplete, version-dependent, or unsupported content as `待验证`.
-7. Do not scan neighboring private directories unless the user supplied that scope or the task cannot be completed without it.
+4. When the user supplies equivalent formats of the same material, assign each format a verification role instead of assuming byte-level identity. Use the editable format for headings and tables, the rendered format for pagination and layout, and compare section names, named objects, key values, omissions, and revisions before treating them as the same source version.
+5. Check internal consistency before extracting summary facts. Reconcile cover totals, abstract claims, table-row counts, duplicate objects, units, and detailed sections. Preserve unexplained differences as source conflicts rather than selecting the most prominent number.
+6. Preserve page, section, table, figure, heading, DOI, URL, CiteKey, or other source locations.
+7. Classify each source as primary, official project, secondary synthesis, user record, or Agent-generated material. Record the observed version and access date for changeable project pages and datasets.
+8. Record extraction limitations. Mark unreadable, conflicting, incomplete, version-dependent, or unsupported content as `待验证`.
+9. Do not scan neighboring private directories unless the user supplied that scope or the task cannot be completed without it.
 
 ## Separate Statements by Provenance
 
@@ -100,7 +102,7 @@ In analysis mode, provide:
 1. source and extraction status;
 2. material scope and document structure;
 3. evidence-backed findings with source locations;
-4. primary-source verification status and any version or count conflicts;
+4. primary-source verification status and any cross-format, version, total, unit, or count conflicts;
 5. candidate knowledge objects;
 6. existing pages that could be updated;
 7. justified new-page candidates;

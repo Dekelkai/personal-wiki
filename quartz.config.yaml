@@ -131,9 +131,10 @@ plugins:
   - source: github:quartz-community/explorer
     enabled: true
     options:
+      title: 目录
       folderClickBehavior: collapse
       folderDefaultState: collapsed
-      useSavedState: true
+      useSavedState: false
     layout:
       position: left
       priority: 50
