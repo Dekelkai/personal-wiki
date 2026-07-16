@@ -8,6 +8,7 @@ import http.server
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -16,6 +17,7 @@ from urllib.parse import unquote, urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 CONTENT = ROOT / "content"
 QUARTZ_CLI = ROOT / "quartz" / "bootstrap-cli.mjs"
+SITE_CHECK = ROOT / "scripts" / "check_site.py"
 IGNORED_PARTS = {"_inbox", "_templates", "_archive", ".obsidian", "private", "templates"}
 PUBLISH_FALSE_RE = re.compile(r"^(\s*publish:\s*)false(\s*)$")
 
@@ -134,6 +136,14 @@ def main() -> int:
         result = subprocess.run(command, cwd=ROOT, check=False)
         if result.returncode != 0:
             return result.returncode
+
+        check_result = subprocess.run(
+            [sys.executable, str(SITE_CHECK), str(preview_output)],
+            cwd=ROOT,
+            check=False,
+        )
+        if check_result.returncode != 0:
+            return check_result.returncode
         if args.build_only:
             print("本地私有内容预览构建成功。")
             return 0

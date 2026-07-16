@@ -69,4 +69,10 @@ python3 scripts/preview_kb.py --all-private
 python3 scripts/preview_kb.py --build-only
 ```
 
+预览脚本会在 Quartz 构建后自动检查生成 HTML 中的页面链接、脚本、样式、图片引用和单 H1 结构。也可以单独检查正式构建产物：
+
+```bash
+python3 scripts/check_site.py public
+```
+
 默认仅监听 `127.0.0.1`。确有跨设备访问需要时才显式使用 `--host 0.0.0.0`，并先确认网络和隐私边界。
