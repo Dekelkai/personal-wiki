@@ -68,13 +68,15 @@ Never transform an inference into a fact. Never describe a source-reported resul
 
 Treat secondary reports as discovery and synthesis sources. Before applying stable dataset facts such as scale, license, availability, splits, coordinate systems, or ground truth, verify them against the paper, official project page, or maintained dataset repository. When sources disagree, preserve both values with their dates and scopes rather than selecting one silently.
 
+Treat code licensing, dataset licensing, download availability, and publication copyright as separate facts. Never infer a dataset license from the license badge or `LICENSE` file of an accompanying code repository unless the official source explicitly states that it covers the data.
+
 ## Identify Knowledge Objects
 
 Decompose the source into candidate objects such as `concept`, `topic`, `method`, `dataset`, `metric`, `paper`, `survey`, `experiment`, `project`, `decision`, `guide`, `troubleshooting`, `reference`, or `article`.
 
 For data resources, distinguish the underlying dataset or collection from its benchmark task, evaluation protocol, derived subset, and current download release. A report's task taxonomy is an analytical view and may overlap; do not turn it into a permanent mutually exclusive hierarchy without evidence from repeated use.
 
-Use the repository Schema before proposing implementation. If a candidate type such as `topic`, `metric`, or `survey` is not yet supported, label it as a target-model candidate and identify the required Schema/template/checker alignment.
+Use the repository Schema before proposing implementation. Do not assume that a type described in project documentation is already supported; when a candidate type is absent, label it as a target-model candidate and identify the required Schema/template/checker alignment.
 
 Do not create one formal page per source by default. A paper or report can support multiple knowledge objects, while a method or dataset page should accumulate evidence from multiple sources.
 

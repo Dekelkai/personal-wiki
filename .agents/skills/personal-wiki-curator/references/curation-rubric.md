@@ -39,7 +39,7 @@ Do not silently fill missing fields from general knowledge. If additional verifi
 | `reference` | Which compact facts, commands, terms, or resources need quick lookup? | A full explanatory tutorial |
 | `article` | Which ideas form a reader-oriented narrative output? | The canonical source of underlying knowledge |
 
-The target model includes `topic`, `metric`, and `survey`, but implementation must wait until the repository Schema, templates, and checker support them.
+The repository currently supports `topic`, `metric`, and `survey`. Recheck the current Schema, templates, and checker before every implementation rather than relying on this reference alone.
 
 For data-related material, keep these concepts separate:
 
@@ -93,7 +93,7 @@ Do not accept a dataset count, scale, license, coordinate system, or split solel
 For each dataset candidate, record independently when available:
 
 - official name, aliases, paper, DOI, and maintained project URL;
-- source tier, access date, release/version, license, and download mechanism;
+- source tier, access date, release/version, dataset license, code license, publication copyright, and download mechanism as separate fields;
 - task and protocol, including query/gallery or sequence organization;
 - data nature, modalities, sensors, map products, coordinate systems, and ground truth;
 - image/frame count, sequence/trajectory count, spatial coverage, duration, distance, location count, and sampling unit as separate fields;
@@ -105,6 +105,8 @@ Never compare a training-image count with a whole-dataset count, a place count w
 When an official page and a secondary report disagree, retain a discrepancy record such as “report value observed on date A; official project value observed on date B.” Do not silently overwrite either value until the release or counting definition is known.
 
 A secondary report does not automatically need a formal `paper` page or a BibTeX entry. Preserve DOI, CiteKey, or BibTeX when a publication is itself a tracked evidence object; for a user report, file path, title, date, page location, and its cited primary sources are normally sufficient during analysis.
+
+A public download link does not prove that reuse, redistribution, or publication is permitted. Likewise, an MIT or Apache license in a code repository normally covers code only unless the authors explicitly extend it to the dataset. Record an unknown dataset license as `待验证` rather than copying the code license.
 
 ## 5. Programming and Algorithm Material Example
 
