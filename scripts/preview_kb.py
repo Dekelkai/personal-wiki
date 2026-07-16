@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""在临时副本中预览包括 publish:false 在内的正式知识页面。"""
+"""在临时副本中预览指定领域的 publish:false 正式页面。"""
 
 from __future__ import annotations
 
@@ -26,6 +26,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--host", default="127.0.0.1", help="监听地址")
     parser.add_argument("--port", type=int, default=8080, help="HTTP 端口")
+    parser.add_argument(
+        "--private-root",
+        action="append",
+        dest="private_roots",
+        metavar="目录",
+        help="临时开放指定的 content 一级目录；可重复使用，默认 research",
+    )
+    parser.add_argument(
+        "--all-private",
+        action="store_true",
+        help="临时开放所有正式私有页面；日常审阅不建议使用",
+    )
     parser.add_argument(
         "--build-only",
         action="store_true",
@@ -56,12 +68,18 @@ def promote_publish_in_frontmatter(path: Path) -> bool:
     return False
 
 
-def prepare_preview_content(destination: Path) -> int:
+def prepare_preview_content(
+    destination: Path,
+    private_roots: set[str],
+    all_private: bool,
+) -> int:
     shutil.copytree(CONTENT, destination)
     promoted = 0
     for path in destination.rglob("*.md"):
         relative = path.relative_to(destination)
         if any(part in IGNORED_PARTS for part in relative.parts):
+            continue
+        if not all_private and relative.parts[0] not in private_roots:
             continue
         if promote_publish_in_frontmatter(path):
             promoted += 1
@@ -82,13 +100,25 @@ class QuartzPreviewHandler(http.server.SimpleHTTPRequestHandler):
 
 def main() -> int:
     args = parse_args()
+    private_roots = set(args.private_roots or ["research"])
+    missing_roots = sorted(root for root in private_roots if not (CONTENT / root).is_dir())
+    if missing_roots:
+        print(f"不存在的 content 目录：{', '.join(missing_roots)}")
+        return 2
+
     with tempfile.TemporaryDirectory(prefix="personal-wiki-preview-") as temp:
         preview_root = Path(temp)
         preview_content = preview_root / "content"
         preview_output = preview_root / "public"
-        promoted = prepare_preview_content(preview_content)
+        promoted = prepare_preview_content(
+            preview_content,
+            private_roots,
+            args.all_private,
+        )
 
         print(f"临时预览目录：{preview_root}")
+        scope = "全部正式私有页面" if args.all_private else ", ".join(sorted(private_roots))
+        print(f"私有内容范围：{scope}")
         print(f"临时开放 publish:false 页面数：{promoted}")
         print("源文件和正式 publish 字段不会被修改。")
 

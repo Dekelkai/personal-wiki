@@ -32,7 +32,7 @@ python3 scripts/check_kb.py --verbose
 - 存在 Frontmatter、编码等错误时返回非零退出码。
 - 只有失效链接或敏感信息警告时仍返回 0，便于逐步治理内容。
 
-脚本不会忽略 `content/maps/`，因此知识地图中的真实拼写错误仍会被发现。
+脚本会检查所有正式内容目录，因此领域入口中的真实拼写错误仍会被发现。
 
 ## 本地预览私有页面
 
@@ -48,7 +48,20 @@ python3 scripts/preview_kb.py
 http://localhost:8080/
 ```
 
-该脚本会在 `/tmp` 创建内容副本，只在临时副本中将正式页面设为可构建状态，并继续排除 `_inbox`、`_templates`、`_archive` 和 `.obsidian`。源 Markdown、`publish` 字段、`quartz.config.yaml`、`public/` 和部署流程均不会被修改。
+该脚本会在 `/tmp` 创建内容副本。默认只临时开放 `content/research/` 中的私有草稿，并继续排除 `_inbox`、`_templates`、`_archive` 和 `.obsidian`，避免维护规则和其他未审阅草稿同时出现在页面中。源 Markdown、`publish` 字段、`quartz.config.yaml`、`public/` 和部署流程均不会被修改。
+
+预览工程或多个领域：
+
+```bash
+python3 scripts/preview_kb.py --private-root engineering
+python3 scripts/preview_kb.py --private-root research --private-root engineering
+```
+
+只有确实需要完整内部审阅时才使用：
+
+```bash
+python3 scripts/preview_kb.py --all-private
+```
 
 只验证预览构建而不启动服务：
 

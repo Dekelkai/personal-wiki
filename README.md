@@ -1,60 +1,61 @@
-# 唐祥凯的个人知识库
+# 个人知识 Wiki
 
-这是一个面向长期维护的个人 Wiki，覆盖学术研究、计算机视觉、工程技术、AI Agent、项目实践与个人写作。正式知识源为 Markdown、YAML Frontmatter 与 Git；Obsidian 用于编辑，未来计划使用 Quartz 展示。
+这是一个以 Markdown、YAML Frontmatter 和 Git 为规范数据源的长期知识库，内容覆盖当前研究、计算机科学与工程、人工智能、项目实验和写作输出。Obsidian 用于编辑，Quartz 负责公开展示。
 
-## 目录结构
+## 主要目录
 
-- `content/`：Obsidian Vault 与知识正文。
-- `content/maps/`：五大领域知识地图。
-- `content/research/`、`engineering/`、`ai/`、`projects/`、`writing/`：领域内容。
-- `content/reference/`：命令、清单、排查、术语和资源。
-- `content/_inbox/`：待核验和待分类内容，默认不公开。
-- `content/_templates/`：标准笔记模板。
-- `schemas/`：Frontmatter 规范。
-- `scripts/`：本地检查工具。
-- `docs/`：工程说明与后续设计文档。
+- `content/`：Obsidian Vault 与知识正文；
+- `content/maps/`：五个领域入口的源文件目录，网页标题不使用“地图”命名；
+- `content/research/`：研究主题、综述、数据集、指标、方法和论文证据；
+- `content/engineering/`：计算机基础、编程语言和工程实践；
+- `content/ai/`：人工智能知识与工具实践；
+- `content/projects/`：项目、实验与技术决策；
+- `content/reference/`：参考资料和内部维护内容；
+- `content/_inbox/`：待核验任务，始终不公开；
+- `content/_templates/`：笔记模板；
+- `schemas/`：Frontmatter Schema；
+- `scripts/`：检查与本地预览工具；
+- `docs/`：项目设计、路线和试点记录。
 
-Obsidian Vault 路径为 `F:\KnowledgeBase\personal-wiki\content`。
+Obsidian Vault 路径：`F:\KnowledgeBase\personal-wiki\content`。
 
-## 数据职责边界
+## 内容来源边界
 
-- Personal Wiki：整理后的长期知识、项目记录与可发布内容。
-- PaperNotes：现有私人论文笔记来源，本轮位于 `F:\OneDrive\obsidian\PaperNotes`，不得直接修改。
-- Hexo 博客：已发布或准备发布的博客来源，本轮位于 `F:\Blog`，不得直接修改。
-- 后续迁移必须先制定映射、去重、隐私和回滚方案，不进行无审查的批量复制。
+- `personal-wiki` 保存整理后的长期知识和项目记录；
+- PaperNotes、Zotero PDF、专题报告和博客是只读来源，不进行无审查的批量复制；
+- 原始材料需要先识别概念、方法、数据集、指标、论文证据和实验，再决定更新已有页面或创建新页面；
+- `publish: false` 只控制 Quartz 输出，不是敏感信息保护机制。
 
-## 新建笔记
+## 新建或修改页面
 
-1. 先全文搜索已有标题和近义概念。
-2. 选择明确的中文名称；英文官方技术名称保留官方写法。
-3. 从 `content/_templates/` 复制最合适的模板。
-4. 填写全部必需 Frontmatter，默认 `status: draft`、`publish: false`。
-5. 增加用途说明、实质内容、相关页面与待补充区域。
-6. 将页面连接到合适的知识地图。
+1. 先搜索已有标题、别名和近义概念；
+2. 判断页面属于哪种知识对象，而不是只按文件夹归类；
+3. 使用 `content/_templates/` 中最接近的模板；
+4. 新页面默认 `status: draft`、`publish: false`；
+5. 区分外部事实、论文结论、个人实验和待验证判断；
+6. 为外部事实和研究结论保留来源；
+7. 修改后运行检查和 Quartz 构建。
 
-## 使用模板
+详细规则见 `AGENTS.md`、`schemas/frontmatter.schema.json` 和 `docs/项目总览与路线图.md`。
 
-模板使用 `{{title}}` 和 `{{date}}` 占位符。创建正式页面后替换所有占位符，并根据实际内容调整 `type`、`domain` 和章节；不要把模板本身发布。
+## 检查与构建
 
-## 维护知识地图
+```bash
+python3 scripts/check_kb.py
+node ./quartz/bootstrap-cli.mjs build
+```
 
-知识地图位于 `content/maps/`，负责组织领域入口和关键关系。新增重要页面时补充最相关的一张地图，避免在多张地图中重复堆叠相同链接，也不要为尚未存在的所有链接批量创建空页面。
+## 本地审阅私有研究页面
 
-## Agent 修改流程
+```bash
+python3 scripts/preview_kb.py
+```
 
-1. 阅读 `AGENTS.md` 并搜索已有页面。
-2. 对待修改文件创建 `.backup/<时间戳>/` 备份。
-3. 小步修改并保留用户原始观点。
-4. 运行 `python scripts/check_kb.py`。
-5. 修复本轮错误，复检后汇总创建、修改和待确认事项。
+浏览器访问 `http://localhost:8080/`。默认只额外开放 `content/research/` 中的私有草稿；其他范围和完整预览方式见 `scripts/README.md`。
 
-## 隐私与发布
+## 外部目录
 
-- `_inbox` 和新页面默认 `publish: false`。
-- 未经人工确认不得修改发布状态。
-- 不记录凭据、Cookie、私钥、私人服务器地址和其他敏感信息。
-- 公开前检查事实、来源、版权、隐私与失效链接。
+以下目录只能按用户指定路径选择性读取，禁止 Agent 修改：
 
-## 后续计划
-
-后续将分阶段评估 Quartz、Git 版本管理和自动部署。当前不安装 Quartz、不配置远程 Git、不启用自动部署；实施前需先确认公开范围、构建环境、域名与隐私策略。
+- `F:\OneDrive\obsidian\PaperNotes`；
+- `F:\Blog`。
