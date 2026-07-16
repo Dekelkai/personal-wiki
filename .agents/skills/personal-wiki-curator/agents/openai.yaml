@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Wiki Curator"
+  short_description: "将论文、PDF与技术材料提炼为可追踪的个人 Wiki 知识对象"
+  default_prompt: "Use $personal-wiki-curator to analyze the supplied source and propose evidence-backed Wiki updates without modifying files first."
