@@ -33,3 +33,27 @@ python3 scripts/check_kb.py --verbose
 - 只有失效链接或敏感信息警告时仍返回 0，便于逐步治理内容。
 
 脚本不会忽略 `content/maps/`，因此知识地图中的真实拼写错误仍会被发现。
+
+## 本地预览私有页面
+
+正式 Quartz 构建启用了 ExplicitPublish，因此 `publish: false` 页面不会进入公开站点。需要在本机审阅私有草稿时运行：
+
+```bash
+python3 scripts/preview_kb.py
+```
+
+然后在 Windows 浏览器访问：
+
+```text
+http://localhost:8080/
+```
+
+该脚本会在 `/tmp` 创建内容副本，只在临时副本中将正式页面设为可构建状态，并继续排除 `_inbox`、`_templates`、`_archive` 和 `.obsidian`。源 Markdown、`publish` 字段、`quartz.config.yaml`、`public/` 和部署流程均不会被修改。
+
+只验证预览构建而不启动服务：
+
+```bash
+python3 scripts/preview_kb.py --build-only
+```
+
+默认仅监听 `127.0.0.1`。确有跨设备访问需要时才显式使用 `--host 0.0.0.0`，并先确认网络和隐私边界。
