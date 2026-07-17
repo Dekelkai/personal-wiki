@@ -3,7 +3,7 @@ title: Go基础语法
 type: guide
 domain: computer-science
 status: draft
-publish: false
+publish: true
 created: 2026-07-17
 updated: 2026-07-17
 topics: [go, programming-languages]
@@ -152,4 +152,4 @@ func (u User) String() string {
 - [[Go语言]]
 - [[数组与切片]]
 - [[二分查找]]
-- [[后端开发]]
+- [[软件工程]]

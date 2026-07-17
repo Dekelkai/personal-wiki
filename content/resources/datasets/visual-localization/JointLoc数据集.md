@@ -3,7 +3,7 @@ title: JointLoc 数据集
 type: dataset
 domain: resources
 status: draft
-publish: false
+publish: true
 created: 2026-07-16
 updated: 2026-07-17
 topics: [computer-vision, visual-localization, planetary]
